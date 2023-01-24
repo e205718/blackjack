@@ -1,15 +1,19 @@
 import Web3 from 'web3'
-import { useNavigate } from "react-router-dom"
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
+import React from 'react';
 
-function useBalance(){
+
+function usePog(){
 
 const Web3 = require('web3');
 var currentProvider = new Web3.providers.HttpProvider('http://localhost:7545');
 const web3 = new Web3(currentProvider);
 
-const navigate = useNavigate()
+let tokenAddress = "0xE387cC87AC9ec21A223420A535a6Db30b9989E19";
 
+let walletAddress = "0x1E07f4b714733fC8a8F4D64CBDfE35aE0C9F5978";
+let toAddress = "0xfF8757031Dc4F156d7aaB88290AEA8B1Da7bFD12";
+// ERC20 トークンの残高を取得するための最小限のABI
 let minABI = [
   // balanceOf
   {
@@ -26,14 +30,65 @@ let minABI = [
     "name":"decimals",
     "outputs":[{"name":"","type":"uint8"}],
     "type":"function"
-  }
-];
-var accounts = window.ethereum.request({ method: 'eth_requestAccounts' });
-    const [balance, setBalance] = useState(0);
-    const init = async () => {
-    const balance = await web3?.eth.getBalance(accounts);
-    setBalance(balance / 10 ** 18);
-};
-init();
+  },
+  // transfer
+{
+  "constant": false,
+  "inputs": [
+   {
+    "name": "_to",
+    "type": "address"
+   },
+   {
+    "name": "_value",
+    "type": "uint256"
+   }
+  ],
+  "name": "transfer",
+  "outputs": [
+   {
+    "name": "",
+    "type": "bool"
+   }
+  ],
+  "type": "function"
 }
-export default useBalance;
+];
+const [balance, setBalance] = useState(0);
+//  ABI とコントラクト（ERC20トークン）のアドレスから、コントラクトのインスタンスを取得
+const contract = new web3.eth.Contract(minABI,tokenAddress ,{ from: walletAddress });
+
+// 引数にウォレットのアドレスを渡して、balanceOf 関数を呼ぶ
+
+const handleSubmit = async () => {
+  const value = 500/10**18;
+  await contract.transfer(toAddress, value, (error, txHash) => {
+    // トランザクションを実行するので、戻り値はトランザクションハッシュ
+    console.log(txHash);
+  });
+};
+async function pp(){
+  let decimals = web3.utils.toBN("18");
+  let amount = web3.utils.toBN("100"); //少数が無理？
+  let value = amount/web3.utils.toBN(10).pow(decimals);
+  const txHash = await contract.methods.transfer(toAddress, value).call();
+    // トランザクションを実行するので、戻り値はトランザクションハッシュ
+    console.log(txHash);
+
+}
+const a = pp();
+console.log(a);
+return (
+  <div className="App">
+
+      <div>
+          <form onSubmit={handleSubmit}>
+              <input type="submit" value="決定" />
+          </form>
+      </div>
+
+  </div>
+);
+}
+
+export default usePog;

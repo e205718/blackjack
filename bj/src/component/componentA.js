@@ -7,7 +7,7 @@ const ComponentA = () => {
             <p>ComponentA</p>
             <button onClick={() => navigate('/componentb')}>Test</button>
             <p>go</p>
-            <button onClick={() => navigate('/je')}>お支払い</button>
+            <button onClick={() => navigate('/je')}>ログイン画面</button>
 
 
             <a
@@ -16,11 +16,11 @@ const ComponentA = () => {
             target="_blank"
             rel="noopener noreferrer"
             >
-            blackJack
+            ゲームテストページ
             </a>
 
-            <button onClick={() => navigate('/Token')}>TOKEN</button>
-            <button onClick={() => navigate('/Balance')}>bb</button>
+            <button onClick={() => navigate('/Token')}>TOKENテスト</button>
+            <button onClick={() => navigate('/Balance')}>bbテスト</button>
 
         </div>
 

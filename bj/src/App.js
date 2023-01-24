@@ -1,6 +1,5 @@
 import logo from './logo.svg';
 import './App.css';
-import './sign.js';
 import { useState } from "react"
 import Web3 from "web3"
 import Routers from './Routers';

@@ -1,38 +1,4 @@
 
-var currentProvider = new Web3.providers.HttpProvider('http://localhost:7545');
-const web3 = new Web3(currentProvider);
-let tokenAddress = "0xE387cC87AC9ec21A223420A535a6Db30b9989E19";
-let walletAddress = "0x1E07f4b714733fC8a8F4D64CBDfE35aE0C9F5978";
-let minABI = [
-  // balanceOf
-  {
-    "constant":true,
-    "inputs":[{"name":"_owner","type":"address"}],
-    "name":"balanceOf",
-    "outputs":[{"name":"balance","type":"uint256"}],
-    "type":"function"
-  },
-  // decimals
-  {
-    "constant":true,
-    "inputs":[],
-    "name":"decimals",
-    "outputs":[{"name":"","type":"uint8"}],
-    "type":"function"
-  }
-];
-
-const contract = new web3.eth.Contract(minABI,tokenAddress);
-
-// 引数にウォレットのアドレスを渡して、balanceOf 関数を呼ぶ
-//const [balance, setBalance] = React.useState(0);
-async function print(){
-const balance = await contract.methods.balanceOf(walletAddress).call();
-console.log(balance)
-  //setBalance(balance / 10 ** 18);
-}
-print();
-// カードの山（配列）
 let cards = [];
 
 // 自分のカード（配列）
@@ -52,6 +18,10 @@ let userNum = 0;
 
 let latchFlag = false;
 
+var param = location.search
+let ret = param.replace(/^./g,"");
+param = Number(ret);
+const defaultmoney = Number(ret);
 let myFields = document.querySelectorAll(".myCard");
 let comFields = document.querySelectorAll(".comCard");
 const btn = document.getElementById("btn");
@@ -59,6 +29,7 @@ const myToken = document.getElementById("myToken");
 const latch = document.getElementById("guessField");
 const disLatch = document.getElementById("decLatch");
 const test = document.getElementById("test");
+const payout = document.getElementById("payout");
 
 /***********************************************
   イベントハンドラの割り当て
@@ -75,12 +46,13 @@ document.querySelector("#judge").addEventListener("click", clickJudgeHandler);
 // 「もう1回遊ぶ」ボタンを押したとき実行する関数を登録
 document.querySelector("#reset").addEventListener("click", clickResetHandler);
 
+document.querySelector("#payout").addEventListener("click", clickPayoutHandler);
 /***********************************************
   イベントハンドラ
 ************************************************/
 
 if (resetNum === 0){
-  money = balance;
+  money = param;
 }
 myToken.textContent = "持ち金：" + money + "チップ";
 latch.focus();
@@ -108,7 +80,7 @@ btn.addEventListener("click", () => {
 // ページの読み込みが完了したとき実行する関数
 function loadHandler() {
   if (resetNum === 0){
-    money = balance;
+    money = param;
   }
   myToken.textContent = "持ち金：" + money + "チップ";
   latch.focus();
@@ -124,6 +96,22 @@ function loadHandler() {
   pickComCard();
   // 画面を更新する
   updateView();
+}
+
+//精算
+function clickPayoutHandler(){
+  if (defaultmoney < money){
+    const winMoney = money - defaultmoney;
+    let vari = "?" + winMoney;
+    let url="http://localhost:3000/blackjackjack/winPayout.html" + vari;
+    window.location.href = url;
+  }
+  if (defaultmoney > money){
+    const loseMoney =   defaultmoney - money ;
+    let vari = "?" + loseMoney;
+    let url="http://localhost:3000/blackjackjack/losePayout.html" + vari;
+    window.location.href = url;
+  }
 }
 
 // 「カードを引く」ボタンを押したとき実行する関数

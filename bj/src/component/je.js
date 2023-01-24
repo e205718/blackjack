@@ -28,6 +28,7 @@ const useJe = () =>{
     const [balance, setBalance] = useState(0);
     const navigate = useNavigate()
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -43,6 +44,8 @@ const useJe = () =>{
         const init = async () => {
             const balance = await web3?.eth.getBalance(account);
             setBalance(balance / 10 ** 18);
+
+
         };
 
         if (account) setIsLogin(true);
@@ -55,14 +58,23 @@ const useJe = () =>{
                 <h1>Please use metadata after login.</h1>
             </div>
         );
+        const redirectToGoogle = () => {
+        let vari = "?" + balance;
+        let url="http://localhost:3000/blackjackjack/index.html" + vari;
+        window.location.href = url;};
 
     return (
+
         <div className="App">
             <div>
                 <h3>{account} wellcome</h3>
                 <div>Balance : {balance} ETH</div>
             </div>
-            <meta http-equiv="refresh" content="2; url=http://localhost:3000/blackjackjack/index.html" />
+<div>
+    <form onSubmit={handleSubmit}>
+    <div onClick={redirectToGoogle}>ゲームへ</div>
+    </form>
+</div>
 
         </div>
     );
